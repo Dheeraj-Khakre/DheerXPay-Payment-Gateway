@@ -2,19 +2,19 @@ package com.dheerx.DheerX_Pay.merchant.controller;
 
 import com.dheerx.DheerX_Pay.common.enums.BusinessType;
 import com.dheerx.DheerX_Pay.merchant.dto.CreateMerchantRequest;
-import com.dheerx.DheerX_Pay.merchant.entities.MerchantAddress;
-import com.dheerx.DheerX_Pay.merchant.entities.MerchantBankDetails;
-import com.dheerx.DheerX_Pay.merchant.entities.merchant;
+import com.dheerx.DheerX_Pay.merchant.dto.MerchantAddressDto;
+import com.dheerx.DheerX_Pay.merchant.dto.MerchantBankDetailsDto;
+import com.dheerx.DheerX_Pay.merchant.entities.Merchant;
 import com.dheerx.DheerX_Pay.merchant.repository.MerchantRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -31,30 +31,28 @@ class MerchantControllerIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @MockitoBean
     private MerchantRepository merchantRepository;
 
     private CreateMerchantRequest request;
 
     @BeforeEach
     void setUp() {
-        MerchantAddress address = MerchantAddress.builder()
-                .addressLine1("12 Tech Park")
-                .landmark("Near City Center")
-                .city("Pune")
-                .state("Maharashtra")
-                .country("India")
-                .postalCode("411001")
-                .build();
+        MerchantAddressDto address = new MerchantAddressDto();
+        address.setAddressLine1("12 Tech Park");
+        address.setLandmark("Near City Center");
+        address.setCity("Pune");
+        address.setState("Maharashtra");
+        address.setCountry("India");
+        address.setPostalCode("411001");
 
-        MerchantBankDetails bankDetails = MerchantBankDetails.builder()
-                .accountHolderName("Demo Merchant")
-                .bankName("ICICI Bank")
-                .accountNumber("987654321012")
-                .ifscCode("ICIC0001234")
-                .branchName("Shivaji Nagar")
-                .beneficiaryType("COMPANY")
-                .build();
+        MerchantBankDetailsDto bankDetails = new MerchantBankDetailsDto();
+        bankDetails.setAccountHolderName("Demo Merchant");
+        bankDetails.setBankName("ICICI Bank");
+        bankDetails.setAccountNumber("987654321012");
+        bankDetails.setIfscCode("ICIC0001234");
+        bankDetails.setBranchName("Shivaji Nagar");
+        bankDetails.setBeneficiaryType("COMPANY");
 
         request = new CreateMerchantRequest(
                 "INT_101",
@@ -76,8 +74,8 @@ class MerchantControllerIntegrationTest {
         when(merchantRepository.existsByMerchantCode(any())).thenReturn(false);
         when(merchantRepository.existsByEmail(any())).thenReturn(false);
         when(merchantRepository.existsByPhone(any())).thenReturn(false);
-        when(merchantRepository.save(any(merchant.class))).thenAnswer(invocation -> {
-            merchant entity = invocation.getArgument(0);
+        when(merchantRepository.save(any(Merchant.class))).thenAnswer(invocation -> {
+            Merchant entity = invocation.getArgument(0);
             entity.setId(java.util.UUID.randomUUID());
             return entity;
         });
@@ -112,4 +110,3 @@ class MerchantControllerIntegrationTest {
                 .andExpect(status().isBadRequest());
     }
 }
-

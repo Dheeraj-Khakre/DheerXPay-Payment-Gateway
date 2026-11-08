@@ -6,10 +6,10 @@ import com.dheerx.DheerX_Pay.common.enums.MerchantStatus;
 import com.dheerx.DheerX_Pay.common.exceptions.DuplicateResourceException;
 import com.dheerx.DheerX_Pay.common.exceptions.ResourceNotFoundException;
 import com.dheerx.DheerX_Pay.merchant.dto.CreateMerchantRequest;
+import com.dheerx.DheerX_Pay.merchant.dto.MerchantAddressDto;
+import com.dheerx.DheerX_Pay.merchant.dto.MerchantBankDetailsDto;
 import com.dheerx.DheerX_Pay.merchant.dto.MerchantResponse;
-import com.dheerx.DheerX_Pay.merchant.entities.MerchantAddress;
-import com.dheerx.DheerX_Pay.merchant.entities.MerchantBankDetails;
-import com.dheerx.DheerX_Pay.merchant.entities.merchant;
+import com.dheerx.DheerX_Pay.merchant.entities.Merchant;
 import com.dheerx.DheerX_Pay.merchant.repository.MerchantRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,23 +39,21 @@ class MerchantServiceTest {
 
     @BeforeEach
     void setUp() {
-        MerchantAddress address = MerchantAddress.builder()
-                .addressLine1("14 Main Street")
-                .landmark("Near Metro Station")
-                .city("Bengaluru")
-                .state("Karnataka")
-                .country("India")
-                .postalCode("560001")
-                .build();
+        MerchantAddressDto address = new MerchantAddressDto();
+        address.setAddressLine1("14 Main Street");
+        address.setLandmark("Near Metro Station");
+        address.setCity("Bengaluru");
+        address.setState("Karnataka");
+        address.setCountry("India");
+        address.setPostalCode("560001");
 
-        MerchantBankDetails bankDetails = MerchantBankDetails.builder()
-                .accountHolderName("DheerX Pay Pvt Ltd")
-                .bankName("HDFC Bank")
-                .accountNumber("123456789012")
-                .ifscCode("HDFC0001234")
-                .branchName("Koramangala")
-                .beneficiaryType("COMPANY")
-                .build();
+        MerchantBankDetailsDto bankDetails = new MerchantBankDetailsDto();
+        bankDetails.setAccountHolderName("DheerX Pay Pvt Ltd");
+        bankDetails.setBankName("HDFC Bank");
+        bankDetails.setAccountNumber("123456789012");
+        bankDetails.setIfscCode("HDFC0001234");
+        bankDetails.setBranchName("Koramangala");
+        bankDetails.setBeneficiaryType("COMPANY");
 
         request = new CreateMerchantRequest(
                 "DHX_001",
@@ -78,30 +76,18 @@ class MerchantServiceTest {
         when(merchantRepository.existsByEmail(anyString())).thenReturn(false);
         when(merchantRepository.existsByPhone(anyString())).thenReturn(false);
 
-        merchant saved = merchant.builder()
-                .id(UUID.randomUUID())
-                .merchantCode(request.merchantCode())
-                .businessName(request.businessName())
-                .businessType(request.businessType())
-                .legalName(request.legalName())
-                .email(request.email())
-                .phone(request.phone())
-                .websiteUrl(request.websiteUrl())
-                .gstId(request.gstId())
-                .pan(request.pan())
-                .status(MerchantStatus.PENDING_KYC)
-                .address(request.address())
-                .bankDetails(request.bankDetails())
-                .build();
-
-        when(merchantRepository.save(any(merchant.class))).thenReturn(saved);
+        when(merchantRepository.save(any(Merchant.class))).thenAnswer(invocation -> {
+            Merchant merchant = invocation.getArgument(0);
+            merchant.setId(UUID.randomUUID());
+            return merchant;
+        });
 
         ApiResponse<MerchantResponse> response = merchantService.createMerchant(request);
 
         assertNotNull(response);
         assertEquals("SUCCESS", response.status());
         assertEquals("DheerX Pay", response.data().businessName());
-        verify(merchantRepository).save(any(merchant.class));
+        verify(merchantRepository).save(any(Merchant.class));
     }
 
     @Test
@@ -117,7 +103,7 @@ class MerchantServiceTest {
     @Test
     void getMerchantById_shouldReturnMerchant() {
         UUID merchantId = UUID.randomUUID();
-        merchant entity = merchant.builder()
+        Merchant entity = Merchant.builder()
                 .id(merchantId)
                 .merchantCode("DHX_002")
                 .businessName("Test Merchant")
@@ -149,7 +135,7 @@ class MerchantServiceTest {
 
     @Test
     void getAllMerchants_shouldReturnList() {
-        merchant entity = merchant.builder()
+        Merchant entity = Merchant.builder()
                 .id(UUID.randomUUID())
                 .merchantCode("DHX_003")
                 .businessName("Another Merchant")
@@ -168,4 +154,3 @@ class MerchantServiceTest {
         assertEquals(1, response.data().size());
     }
 }
-

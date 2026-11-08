@@ -4,13 +4,13 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/dheerx_pay_db
     username: dheerx_user
-    password: "Dheerx@123"
+    password: Dheerx@123
     driver-class-name: org.postgresql.Driver
 
-    jpa:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
       hibernate:
-        ddl-auto: update
-      show-sql: true
-      properties:
-        hibernate:
-          format_sql: true
+        format_sql: true

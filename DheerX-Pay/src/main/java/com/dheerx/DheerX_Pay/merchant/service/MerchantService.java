@@ -5,8 +5,12 @@ import com.dheerx.DheerX_Pay.common.enums.MerchantStatus;
 import com.dheerx.DheerX_Pay.common.exceptions.DuplicateResourceException;
 import com.dheerx.DheerX_Pay.common.exceptions.ResourceNotFoundException;
 import com.dheerx.DheerX_Pay.merchant.dto.CreateMerchantRequest;
+import com.dheerx.DheerX_Pay.merchant.dto.MerchantAddressDto;
+import com.dheerx.DheerX_Pay.merchant.dto.MerchantBankDetailsDto;
 import com.dheerx.DheerX_Pay.merchant.dto.MerchantResponse;
 import com.dheerx.DheerX_Pay.merchant.entities.Merchant;
+import com.dheerx.DheerX_Pay.merchant.entities.MerchantAddress;
+import com.dheerx.DheerX_Pay.merchant.entities.MerchantBankDetails;
 import com.dheerx.DheerX_Pay.merchant.repository.MerchantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,8 +41,8 @@ public class MerchantService {
                 .pan(request.pan())
                 .status(MerchantStatus.PENDING_KYC)
                 .kycVerified(false)
-                .address(request.address())
-                .bankDetails(request.bankDetails())
+                .address(toEntity(request.address()))
+                .bankDetails(toEntity(request.bankDetails()))
                 .build();
 
         Merchant saved = merchantRepository.save(merchantEntity);
@@ -112,8 +116,63 @@ public class MerchantService {
                 merchantEntity.getPan(),
                 merchantEntity.getStatus(),
                 merchantEntity.isKycVerified(),
-                merchantEntity.getAddress(),
-                merchantEntity.getBankDetails());
+                toDto(merchantEntity.getAddress()),
+                toDto(merchantEntity.getBankDetails()));
+    }
+
+    private MerchantAddress toEntity(MerchantAddressDto address) {
+        return MerchantAddress.builder()
+                .addressLine1(address.getAddressLine1())
+                .addressLine2(address.getAddressLine2())
+                .landmark(address.getLandmark())
+                .city(address.getCity())
+                .state(address.getState())
+                .country(address.getCountry())
+                .postalCode(address.getPostalCode())
+                .build();
+    }
+
+    private MerchantBankDetails toEntity(MerchantBankDetailsDto bankDetails) {
+        return MerchantBankDetails.builder()
+                .accountHolderName(bankDetails.getAccountHolderName())
+                .bankName(bankDetails.getBankName())
+                .accountNumber(bankDetails.getAccountNumber())
+                .ifscCode(bankDetails.getIfscCode())
+                .branchName(bankDetails.getBranchName())
+                .upiId(bankDetails.getUpiId())
+                .beneficiaryType(bankDetails.getBeneficiaryType())
+                .build();
+    }
+
+    private MerchantAddressDto toDto(MerchantAddress address) {
+        if (address == null) {
+            return null;
+        }
+
+        MerchantAddressDto dto = new MerchantAddressDto();
+        dto.setAddressLine1(address.getAddressLine1());
+        dto.setAddressLine2(address.getAddressLine2());
+        dto.setLandmark(address.getLandmark());
+        dto.setCity(address.getCity());
+        dto.setState(address.getState());
+        dto.setCountry(address.getCountry());
+        dto.setPostalCode(address.getPostalCode());
+        return dto;
+    }
+
+    private MerchantBankDetailsDto toDto(MerchantBankDetails bankDetails) {
+        if (bankDetails == null) {
+            return null;
+        }
+
+        MerchantBankDetailsDto dto = new MerchantBankDetailsDto();
+        dto.setAccountHolderName(bankDetails.getAccountHolderName());
+        dto.setBankName(bankDetails.getBankName());
+        dto.setAccountNumber(bankDetails.getAccountNumber());
+        dto.setIfscCode(bankDetails.getIfscCode());
+        dto.setBranchName(bankDetails.getBranchName());
+        dto.setUpiId(bankDetails.getUpiId());
+        dto.setBeneficiaryType(bankDetails.getBeneficiaryType());
+        return dto;
     }
 }
-
