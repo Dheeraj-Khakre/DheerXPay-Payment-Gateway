@@ -33,7 +33,7 @@ public class AuthController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(ApiResponse.success(
-                        "Merchant registered successfully",
+                        "Merchant API-KEY successfully",
                         response
                 ));
     }

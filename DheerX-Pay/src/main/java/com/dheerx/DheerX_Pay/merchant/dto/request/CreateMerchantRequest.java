@@ -1,7 +1,6 @@
 package com.dheerx.DheerX_Pay.merchant.dto.request;
 
 import com.dheerx.DheerX_Pay.common.enums.BusinessType;
-import com.dheerx.DheerX_Pay.merchant.dto.MerchantBankDetailsDto;
 import com.dheerx.DheerX_Pay.merchant.dto.response.MerchantAddressDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -50,10 +49,6 @@ public record CreateMerchantRequest(
 
         @NotNull(message = "Address is required")
         @Valid
-        MerchantAddressDto address,
-
-        @NotNull(message = "Bank details are required")
-        @Valid
-        MerchantBankDetailsDto bankDetails
+        MerchantAddressDto address
 ) {
 }

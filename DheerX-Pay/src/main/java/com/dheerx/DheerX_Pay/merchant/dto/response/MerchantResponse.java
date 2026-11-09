@@ -2,7 +2,6 @@ package com.dheerx.DheerX_Pay.merchant.dto.response;
 
 import com.dheerx.DheerX_Pay.common.enums.BusinessType;
 import com.dheerx.DheerX_Pay.common.enums.MerchantStatus;
-import com.dheerx.DheerX_Pay.merchant.dto.MerchantBankDetailsDto;
 import lombok.Builder;
 
 import java.util.UUID;
@@ -24,7 +23,6 @@ public record MerchantResponse(
         String pan,
         MerchantStatus status,
         boolean kycVerified,
-        MerchantAddressDto address,
-        MerchantBankDetailsDto bankDetails
+        MerchantAddressDto address
 ) {
 }

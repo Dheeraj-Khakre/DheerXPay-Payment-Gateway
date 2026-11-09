@@ -7,7 +7,6 @@ import com.dheerx.DheerX_Pay.common.exceptions.DuplicateResourceException;
 import com.dheerx.DheerX_Pay.common.exceptions.ResourceNotFoundException;
 import com.dheerx.DheerX_Pay.merchant.dto.request.CreateMerchantRequest;
 import com.dheerx.DheerX_Pay.merchant.dto.response.MerchantAddressDto;
-import com.dheerx.DheerX_Pay.merchant.dto.MerchantBankDetailsDto;
 import com.dheerx.DheerX_Pay.merchant.dto.response.MerchantResponse;
 import com.dheerx.DheerX_Pay.merchant.entities.Merchant;
 import com.dheerx.DheerX_Pay.merchant.repository.MerchantRepository;

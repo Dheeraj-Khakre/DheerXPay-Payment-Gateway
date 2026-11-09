@@ -60,6 +60,9 @@ public class ApiKey extends AuditableEntity {
     @Column(name = "key_secret_hash", nullable = false,unique = true, length = 255)
     private String keySecretHash;
 
+    @Column(name = "Previous_key_secret_hash",unique = true, length = 255)
+    private String previousKeySecretHash;
+
     @Column(name = "webhook_secret_hash", length = 255)
     private String webhookSecretHash;
 
