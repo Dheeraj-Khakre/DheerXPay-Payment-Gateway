@@ -1,4 +1,4 @@
-package com.dheerx.DheerX_Pay.merchant.dto;
+package com.dheerx.DheerX_Pay.merchant.dto.response;
 
 import java.util.UUID;
 

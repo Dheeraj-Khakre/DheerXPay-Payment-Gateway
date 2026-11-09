@@ -1,5 +1,7 @@
 package com.dheerx.DheerX_Pay.common.api;
 
+import lombok.Builder;
+
 import java.time.Instant;
 
 /**
@@ -7,14 +9,32 @@ import java.time.Instant;
  *
  * @param <T> payload type returned by the API
  */
+@Builder
 public record ApiResponse<T>(
-        String status,
+        boolean success,
         String message,
         T data,
         Instant timestamp
 ) {
-    public ApiResponse(String status, String message, T data) {
-        this(status, message, data, Instant.now());
+
+    public static <T> ApiResponse<T> success(
+            String message,
+            T data
+    ) {
+        return ApiResponse.<T>builder()
+                .success(true)
+                .message(message)
+                .data(data)
+                .timestamp(Instant.now())
+                .build();
+    }
+
+    public static <T> ApiResponse<T> error(String message) {
+        return ApiResponse.<T>builder()
+                .success(false)
+                .message(message)
+                .data(null)
+                .timestamp(Instant.now())
+                .build();
     }
 }
-

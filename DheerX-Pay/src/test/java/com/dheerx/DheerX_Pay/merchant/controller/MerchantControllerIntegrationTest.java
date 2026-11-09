@@ -1,8 +1,8 @@
 package com.dheerx.DheerX_Pay.merchant.controller;
 
 import com.dheerx.DheerX_Pay.common.enums.BusinessType;
-import com.dheerx.DheerX_Pay.merchant.dto.CreateMerchantRequest;
-import com.dheerx.DheerX_Pay.merchant.dto.MerchantAddressDto;
+import com.dheerx.DheerX_Pay.merchant.dto.request.CreateMerchantRequest;
+import com.dheerx.DheerX_Pay.merchant.dto.response.MerchantAddressDto;
 import com.dheerx.DheerX_Pay.merchant.dto.MerchantBankDetailsDto;
 import com.dheerx.DheerX_Pay.merchant.entities.Merchant;
 import com.dheerx.DheerX_Pay.merchant.repository.MerchantRepository;

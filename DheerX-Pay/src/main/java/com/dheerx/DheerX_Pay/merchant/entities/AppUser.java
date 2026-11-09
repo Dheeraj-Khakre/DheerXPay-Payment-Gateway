@@ -15,11 +15,11 @@ import java.util.UUID;
 @Table(
         name = "app_users",
         uniqueConstraints = {
-                @UniqueConstraint(name = "uk_app_user_username", columnNames = "username"),
+//                @UniqueConstraint(name = "uk_app_user_username", columnNames = "username"),
                 @UniqueConstraint(name = "uk_app_user_email", columnNames = "email")
         },
         indexes = {
-                @Index(name = "idx_app_user_username", columnList = "username"),
+//                @Index(name = "idx_app_user_username", columnList = "username"),
                 @Index(name = "idx_app_user_email", columnList = "email")
         }
 )

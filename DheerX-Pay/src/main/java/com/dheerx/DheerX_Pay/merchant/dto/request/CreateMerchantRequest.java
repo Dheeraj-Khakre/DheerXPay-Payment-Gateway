@@ -1,6 +1,8 @@
-package com.dheerx.DheerX_Pay.merchant.dto;
+package com.dheerx.DheerX_Pay.merchant.dto.request;
 
 import com.dheerx.DheerX_Pay.common.enums.BusinessType;
+import com.dheerx.DheerX_Pay.merchant.dto.MerchantBankDetailsDto;
+import com.dheerx.DheerX_Pay.merchant.dto.response.MerchantAddressDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

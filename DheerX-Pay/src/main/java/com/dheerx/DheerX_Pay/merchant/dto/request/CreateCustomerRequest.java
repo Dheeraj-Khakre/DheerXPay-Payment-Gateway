@@ -1,15 +1,17 @@
-package com.dheerx.DheerX_Pay.merchant.dto;
+package com.dheerx.DheerX_Pay.merchant.dto.request;
 
-import com.dheerx.DheerX_Pay.common.enums.UserRoles;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+import java.util.UUID;
+
 /**
- * Request body used to create an application user assigned to a merchant.
+ * Request body used to create a customer under a merchant.
  */
-public record CreateAppUserRequest(
+public record CreateCustomerRequest(
         @NotBlank(message = "Username is required")
         @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
         String username,
@@ -19,15 +21,15 @@ public record CreateAppUserRequest(
         @Size(max = 150, message = "Email must not exceed 150 characters")
         String email,
 
-        @NotBlank(message = "Password is required")
-        @Size(min = 8, max = 255, message = "Password must be between 8 and 255 characters")
-        String password,
+        @NotBlank(message = "Phone number is required")
+        @Pattern(regexp = "^[+]?[0-9()\\-\\s]{8,20}$", message = "Phone number is invalid")
+        String phone,
 
-        @NotNull(message = "User role is required")
-        UserRoles role,
+        @Size(max = 20, message = "GSTIN must not exceed 20 characters")
+        String gstin,
 
         @NotNull(message = "Merchant id is required")
-        java.util.UUID merchantId
+        UUID merchantId
 ) {
 }
 

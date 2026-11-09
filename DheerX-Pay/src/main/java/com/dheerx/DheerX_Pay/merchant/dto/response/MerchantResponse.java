@@ -1,13 +1,16 @@
-package com.dheerx.DheerX_Pay.merchant.dto;
+package com.dheerx.DheerX_Pay.merchant.dto.response;
 
 import com.dheerx.DheerX_Pay.common.enums.BusinessType;
 import com.dheerx.DheerX_Pay.common.enums.MerchantStatus;
+import com.dheerx.DheerX_Pay.merchant.dto.MerchantBankDetailsDto;
+import lombok.Builder;
 
 import java.util.UUID;
 
 /**
  * Response payload returned after merchant creation or retrieval.
  */
+@Builder
 public record MerchantResponse(
         UUID id,
         String merchantCode,

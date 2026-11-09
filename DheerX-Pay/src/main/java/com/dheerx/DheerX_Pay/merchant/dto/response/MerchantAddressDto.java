@@ -1,4 +1,4 @@
-package com.dheerx.DheerX_Pay.merchant.dto;
+package com.dheerx.DheerX_Pay.merchant.dto.response;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
