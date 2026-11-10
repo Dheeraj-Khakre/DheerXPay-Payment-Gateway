@@ -8,6 +8,7 @@ import com.dheerx.DheerX_Pay.payment.dto.request.OrderCreateRequest;
 import com.dheerx.DheerX_Pay.payment.dto.response.OrderResponse;
 import com.dheerx.DheerX_Pay.payment.dto.response.PaymentResponse;
 import com.dheerx.DheerX_Pay.payment.entities.OrderRecord;
+import com.dheerx.DheerX_Pay.payment.mapper.OrderMapper;
 import com.dheerx.DheerX_Pay.payment.repository.OrderRepository;
 import com.dheerx.DheerX_Pay.payment.repository.PaymentRepository;
 import com.dheerx.DheerX_Pay.payment.service.OrderService;
@@ -29,6 +30,7 @@ public class OrderServiceImpl implements OrderService {
 
      private final OrderRepository orderRepository;
      private final PaymentRepository paymentRepository;
+     private final OrderMapper orderMapper;
 
     @Override
     @Transactional
@@ -36,43 +38,19 @@ public class OrderServiceImpl implements OrderService {
         if(request.receipt()!=null && orderRepository.existsByMerchantIdAndReceipt(merchantId,request.receipt())){
             throw  new DuplicateResourceException("ORDER_RECEIPT_DUPLICATE",request.receipt());
         }
-        OrderRecord orderRecord = OrderRecord.builder()
-                .amount(request.money())
-                .attempts(1)
-                .expiresAt(request.expireAt() != null ? request.expireAt() : Instant.now().plusSeconds(30 * 60))
-                .merchantId(merchantId)
-                .notes(request.notes())
-                .receipt(request.receipt())
-                .build();
+        OrderRecord orderRecord = orderMapper.toEntity(request, merchantId);
+        if (orderRecord.getExpiresAt() == null) {
+            orderRecord.setExpiresAt(Instant.now().plusSeconds(30 * 60));
+        }
         orderRecord = orderRepository.save(orderRecord);
         // TODO: public kafka event for order
-        return OrderResponse.builder()
-                .id(orderRecord.getId())
-                .amount(orderRecord.getAmount())
-                .attempts(orderRecord.getAttempts())
-                .createAt(orderRecord.getCreatedAt())
-                .expireAt(orderRecord.getExpiresAt())
-                .merchantId(merchantId)
-                .notes(orderRecord.getNotes())
-                .receipt(orderRecord.getReceipt())
-                .status(orderRecord.getStatus())
-                .build();
+        return orderMapper.toResponse(orderRecord);
     }
 
     @Override
     public OrderResponse gerById(UUID merchantId, UUID orderId) {
         OrderRecord orderRecord = orderRepository.findByIdAndMerchantId(merchantId, orderId).orElseThrow(() -> new ResourceNotFoundException("ORDER_RECORD", orderId));
-        return OrderResponse.builder()
-                .id(orderRecord.getId())
-                .amount(orderRecord.getAmount())
-                .attempts(orderRecord.getAttempts())
-                .createAt(orderRecord.getCreatedAt())
-                .expireAt(orderRecord.getExpiresAt())
-                .merchantId(merchantId)
-                .notes(orderRecord.getNotes())
-                .receipt(orderRecord.getReceipt())
-                .status(orderRecord.getStatus())
-                .build();
+        return orderMapper.toResponse(orderRecord);
     }
 
     @Override
@@ -86,39 +64,14 @@ public class OrderServiceImpl implements OrderService {
         orderRecord  = orderRepository.save(orderRecord);
 
 
-        return OrderResponse.builder()
-                .id(orderRecord.getId())
-                .amount(orderRecord.getAmount())
-                .attempts(orderRecord.getAttempts())
-                .createAt(orderRecord.getCreatedAt())
-                .expireAt(orderRecord.getExpiresAt())
-                .merchantId(merchantId)
-                .notes(orderRecord.getNotes())
-                .receipt(orderRecord.getReceipt())
-                .status(orderRecord.getStatus())
-                .build();
+        return orderMapper.toResponse(orderRecord);
     }
 
     @Override
     public List<PaymentResponse> getListPayment(UUID merchantId, UUID orderId) {
         OrderRecord orderRecord = orderRepository.findByIdAndMerchantId(merchantId, orderId).orElseThrow(() -> new ResourceNotFoundException("ORDER_RECORD", orderId));
         return paymentRepository.findByOrder(orderRecord)
-                .stream().map(paymentRecord -> PaymentResponse.builder()
-                        .id(paymentRecord.getId())
-                        .amount(paymentRecord.getAmount())
-                        .capturedAt(paymentRecord.getCapturedAt())
-                        .createdAt(paymentRecord.getCreatedAt())
-                        .updatedAt(paymentRecord.getUpdatedAt())
-                        .authorizedAt(paymentRecord.getAuthorizedAt())
-                        .failedAt(paymentRecord.getFailedAt())
-                        .bankReference(paymentRecord.getBankReference())
-                        .errorCode(paymentRecord.getErrorCode())
-                        .errorDescription(paymentRecord.getErrorDescription())
-                        .merchantId(paymentRecord.getMerchantId())
-                        .orderId(paymentRecord.getOrder().getId())
-                        .method(paymentRecord.getMethod())
-                        .status(paymentRecord.getStatus())
-                        .build()).toList();
+                .stream().map(orderMapper::toResponse).toList();
 
 
     }
