@@ -5,6 +5,7 @@ import com.dheerx.DheerX_Pay.common.api.ApiResponse;
 import com.dheerx.DheerX_Pay.payment.dto.request.OrderCreateRequest;
 import com.dheerx.DheerX_Pay.payment.dto.response.OrderResponse;
 import com.dheerx.DheerX_Pay.payment.service.OrderService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class OrderController {
     private final UUID merchantId = UUID.fromString("9c64a369-81ea-472f-8c79-721fed3526d2");// todo:  get merchant id from merchant context
 
     @PostMapping
-    public ResponseEntity<ApiResponse<OrderResponse>> createOrder(@RequestBody OrderCreateRequest request){
+    public ResponseEntity<ApiResponse<OrderResponse>> createOrder(@RequestBody @Valid OrderCreateRequest request){
 
         OrderResponse response = orderService.create(merchantId,request);
         return ResponseEntity.status(HttpStatus.CREATED).body(

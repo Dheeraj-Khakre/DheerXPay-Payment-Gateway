@@ -49,14 +49,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponse gerById(UUID merchantId, UUID orderId) {
-        OrderRecord orderRecord = orderRepository.findByIdAndMerchantId(merchantId, orderId).orElseThrow(() -> new ResourceNotFoundException("ORDER_RECORD", orderId));
+        OrderRecord orderRecord = orderRepository.findByIdAndMerchantId(orderId, merchantId).orElseThrow(() -> new ResourceNotFoundException("ORDER_RECORD", orderId));
         return orderMapper.toResponse(orderRecord);
     }
 
     @Override
     @Transactional
     public OrderResponse cancelOrder(UUID merchantId, UUID orderId) {
-        OrderRecord orderRecord = orderRepository.findByIdAndMerchantId(merchantId, orderId).orElseThrow(() -> new ResourceNotFoundException("ORDER_RECORD", orderId));
+        OrderRecord orderRecord = orderRepository.findByIdAndMerchantId(orderId, merchantId).orElseThrow(() -> new ResourceNotFoundException("ORDER_RECORD", orderId));
         if(orderRecord.getStatus()== OrderStatus.CANCELLED || orderRecord.getStatus() == OrderStatus.PAID || orderRecord.getStatus()==OrderStatus.FAILED){
             throw  new BusinessRulesViolationException("ORDER_CANNOT_CANCEL","orcer cannot cancel this this error core "+orderRecord.getStatus().name());
         }
@@ -69,7 +69,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<PaymentResponse> getListPayment(UUID merchantId, UUID orderId) {
-        OrderRecord orderRecord = orderRepository.findByIdAndMerchantId(merchantId, orderId).orElseThrow(() -> new ResourceNotFoundException("ORDER_RECORD", orderId));
+        OrderRecord orderRecord = orderRepository.findByIdAndMerchantId(orderId, merchantId).orElseThrow(() -> new ResourceNotFoundException("ORDER_RECORD", orderId));
         return paymentRepository.findByOrder(orderRecord)
                 .stream().map(orderMapper::toResponse).toList();
 
