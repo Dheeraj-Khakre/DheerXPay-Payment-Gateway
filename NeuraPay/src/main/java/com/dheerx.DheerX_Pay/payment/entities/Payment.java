@@ -51,7 +51,7 @@ public class Payment extends AuditableEntity {
     @Column(name = "merchant_id", nullable = false)
     private UUID merchantId;
 
-    @Column(name = "idempotency_key", nullable = false, length = 255)
+    @Column(name = "idempotency_key", length = 255)
     private String idempotencyKey;
 
     @Embedded

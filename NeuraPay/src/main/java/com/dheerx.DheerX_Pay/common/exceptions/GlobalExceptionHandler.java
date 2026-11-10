@@ -27,6 +27,13 @@ public class GlobalExceptionHandler {
                 .body(ErrorResponse.of(ex.getErrorCode(), ex.getMessage()));
     }
 
+    @ExceptionHandler(BusinessRulesViolationException.class)
+    public ResponseEntity<ErrorResponse> handleBusinessRulesViolationException(BusinessRulesViolationException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ErrorResponse.of(ex.getErrorCode(), ex.getMessage()));
+    }
+
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Map<String, String>>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
