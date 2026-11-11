@@ -7,6 +7,7 @@ import com.dheerx.DheerX_Pay.merchant.dto.response.ApiKeyCreateResponse;
 import com.dheerx.DheerX_Pay.merchant.dto.response.ApiKeyResponse;
 import com.dheerx.DheerX_Pay.merchant.entities.ApiKey;
 import com.dheerx.DheerX_Pay.merchant.entities.Merchant;
+import com.dheerx.DheerX_Pay.merchant.mapper.ApiKeyMapper;
 import com.dheerx.DheerX_Pay.merchant.repository.ApiKeyRepository;
 import com.dheerx.DheerX_Pay.merchant.repository.MerchantRepository;
 import com.dheerx.DheerX_Pay.merchant.service.ApiKeyService;
@@ -26,6 +27,7 @@ public class ApiKeyServiceImpl  implements ApiKeyService {
 
     private final MerchantRepository merchantRepository;
     private final ApiKeyRepository apiKeyRepository;
+    private final ApiKeyMapper apiKeyMapper;
 
     @Override
     @Transactional
@@ -35,34 +37,17 @@ public class ApiKeyServiceImpl  implements ApiKeyService {
         String keyId = "dxp-"+apiKeyRequest.environment().name().toLowerCase()+"-"+ RandomizerUtil.randomBase64(24);
            String rawSecret = RandomizerUtil.randomBase64(40);// todo: creating secret key
 
-        ApiKey apiKey = ApiKey.builder()
-                .environment(apiKeyRequest.environment())
-                .keyId(keyId)
-                .keySecretHash(rawSecret)// todo: converting to BCryyption using spring securtiy
-                .merchant(merchant)
-                .build();
+        ApiKey apiKey = apiKeyMapper.toEntity(apiKeyRequest, merchant, keyId, rawSecret);
       apiKey =  apiKeyRepository.save(apiKey);
 
-        return ApiKeyCreateResponse.builder()
-                .id(apiKey.getId())
-                .environment(apiKey.getEnvironment())
-                .keySecretHash(rawSecret)
-                .keyId(apiKey.getKeyId())
-                .build();
+        return apiKeyMapper.toCreateResponse(apiKey, rawSecret);
     }
 
     @Override
     public List<ApiKeyResponse> getApiKeyListByMerchant(UUID merchantId) {
 
         List<ApiKeyResponse> list = apiKeyRepository.findByMerchant_Id(merchantId)
-                .stream().map(apiKey ->
-                        new ApiKeyResponse(
-                                apiKey.getId(),
-                                apiKey.getKeyId(),
-                                apiKey.getEnvironment(),
-                                apiKey.isEnabled(),
-                                apiKey.getCreatedAt(),
-                                apiKey.getLastUsedAt()))
+                .stream().map(apiKeyMapper::toResponse)
                 .toList();
         return list;
 
@@ -100,12 +85,7 @@ public class ApiKeyServiceImpl  implements ApiKeyService {
 
         apiKey =  apiKeyRepository.save(apiKey);
 
-        return ApiKeyCreateResponse.builder()
-                .id(apiKey.getId())
-                .environment(apiKey.getEnvironment())
-                .keySecretHash(newRawSecret)
-                .keyId(apiKey.getKeyId())
-                .build();
+        return apiKeyMapper.toCreateResponse(apiKey, newRawSecret);
 
 
     }

@@ -36,7 +36,7 @@ import java.util.UUID;
                 )
         },
         indexes = {
-                @Index(name = "idx_order_record_merchant_id", columnList = "merchant_id"),
+                @Index(name = "idx_order_record_merchant_id", columnList = "id,merchant_id"),
                 @Index(name = "idx_order_record_status", columnList = "status")
         }
 )

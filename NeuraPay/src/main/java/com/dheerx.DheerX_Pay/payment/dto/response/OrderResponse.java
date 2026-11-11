@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Builder
-public record CreateOrderResponse(
+public record OrderResponse(
         UUID id,
         UUID merchantId,
         OrderStatus status,
