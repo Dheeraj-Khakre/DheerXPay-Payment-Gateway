@@ -3,7 +3,7 @@ package com.dheerx.DheerX_Pay;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import com.dheerx.DheerX_Pay.DheerXPayApplication;
+import com.dheerxpay.DheerXPayApplication;
 
 class DheerXPayApplicationTests {
 
