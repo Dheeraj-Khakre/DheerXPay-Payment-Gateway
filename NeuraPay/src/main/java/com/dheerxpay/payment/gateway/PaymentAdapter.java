@@ -1,6 +1,6 @@
-package com.dheerxpay.gateway;
+package com.dheerxpay.payment.gateway;
 
-import com.dheerxpay.gateway.dto.PaymentRequest;
+import com.dheerxpay.payment.gateway.dto.PaymentRequest;
 
 public interface PaymentAdapter {
 

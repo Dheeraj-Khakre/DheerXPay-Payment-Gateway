@@ -8,6 +8,8 @@ import com.dheerxpay.payment.dto.request.PaymentInitRequest;
 import com.dheerxpay.payment.dto.response.PaymentResponse;
 import com.dheerxpay.payment.entities.OrderRecord;
 import com.dheerxpay.payment.entities.Payment;
+import com.dheerxpay.payment.gateway.PaymentGatewayRouter;
+import com.dheerxpay.payment.gateway.dto.PaymentRequest;
 import com.dheerxpay.payment.repository.OrderRepository;
 import com.dheerxpay.payment.repository.PaymentRepository;
 import com.dheerxpay.payment.service.PaymentService;
@@ -25,6 +27,7 @@ import java.util.UUID;
 public class PaymentServiceImpl implements PaymentService {
     private final OrderRepository orderRepository;
     private final PaymentRepository paymentRepository;
+    private final PaymentGatewayRouter paymentGatewayRoutor;
     @Override
     @Transactional
     public PaymentResponse initiatePayment(UUID merchantId, PaymentInitRequest request) {
@@ -53,6 +56,18 @@ public class PaymentServiceImpl implements PaymentService {
 
         paymentRepository.save(payment);
         orderRepository.save(order);
+
+        PaymentRequest paymentRequest = PaymentRequest.builder()
+                .paymentId(payment.getId())
+                .amount(payment.getAmount())
+                .merchantId(payment.getMerchantId())
+                .methodDetails(payment.getMethodDetails())
+                .amount(payment.getAmount())
+                .paymentMethod(payment.getMethod())
+                .orderId(order.getId())
+                .build();
+        paymentGatewayRoutor.initiatePayment(paymentRequest);
+
         return null;
 
     }

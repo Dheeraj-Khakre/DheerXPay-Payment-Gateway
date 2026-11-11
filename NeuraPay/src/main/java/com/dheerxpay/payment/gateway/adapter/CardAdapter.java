@@ -1,7 +1,7 @@
-package com.dheerxpay.gateway.adapter;
+package com.dheerxpay.payment.gateway.adapter;
 
-import com.dheerxpay.gateway.PaymentAdapter;
-import com.dheerxpay.gateway.dto.PaymentRequest;
+import com.dheerxpay.payment.gateway.PaymentAdapter;
+import com.dheerxpay.payment.gateway.dto.PaymentRequest;
 
 public class CardAdapter implements PaymentAdapter {
     @Override
