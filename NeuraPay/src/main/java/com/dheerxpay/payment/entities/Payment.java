@@ -82,6 +82,9 @@ public class Payment extends AuditableEntity {
     @Column(name = "bank_reference", length = 150)
     private String bankReference;
 
+    @Column(name = "processor_reference", length = 150)
+    private String processorReference;
+
     @Column(name = "error_code", length = 100)
     private String errorCode;
 

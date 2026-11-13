@@ -1,8 +1,9 @@
 package com.dheerxpay.payment.gateway;
 
 import com.dheerxpay.payment.gateway.dto.PaymentRequest;
+import com.dheerxpay.payment.gateway.dto.PaymentResult;
 
 public interface PaymentAdapter {
 
-    void initiatePayment(PaymentRequest paymentRequest);
+    PaymentResult initiatePayment(PaymentRequest paymentRequest);
 }

@@ -10,6 +10,8 @@ import com.dheerxpay.payment.entities.OrderRecord;
 import com.dheerxpay.payment.entities.Payment;
 import com.dheerxpay.payment.gateway.PaymentGatewayRouter;
 import com.dheerxpay.payment.gateway.dto.PaymentRequest;
+import com.dheerxpay.payment.gateway.dto.PaymentResult;
+import com.dheerxpay.payment.mapper.OrderMapper;
 import com.dheerxpay.payment.repository.OrderRepository;
 import com.dheerxpay.payment.repository.PaymentRepository;
 import com.dheerxpay.payment.service.PaymentService;
@@ -27,7 +29,8 @@ import java.util.UUID;
 public class PaymentServiceImpl implements PaymentService {
     private final OrderRepository orderRepository;
     private final PaymentRepository paymentRepository;
-    private final PaymentGatewayRouter paymentGatewayRoutor;
+    private final PaymentGatewayRouter paymentGatewayRouter;
+    private final OrderMapper orderMapper;
     @Override
     @Transactional
     public PaymentResponse initiatePayment(UUID merchantId, PaymentInitRequest request) {
@@ -54,8 +57,8 @@ public class PaymentServiceImpl implements PaymentService {
                 .status(PaymentStatus.CREATED)
                 .build();
 
-        paymentRepository.save(payment);
-        orderRepository.save(order);
+       payment= paymentRepository.save(payment);
+     ;
 
         PaymentRequest paymentRequest = PaymentRequest.builder()
                 .paymentId(payment.getId())
@@ -66,9 +69,30 @@ public class PaymentServiceImpl implements PaymentService {
                 .paymentMethod(payment.getMethod())
                 .orderId(order.getId())
                 .build();
-        paymentGatewayRoutor.initiatePayment(paymentRequest);
+        PaymentResult paymentResult = paymentGatewayRouter.initiatePayment(paymentRequest);
 
-        return null;
+        switch (paymentResult){
+            case PaymentResult.Pending pending -> {
+                payment.setStatus(PaymentStatus.PENDING);
+                payment.setProcessorReference(pending.registerReference());
+            }
+            case PaymentResult.Failure failure -> {
+                payment.setStatus(PaymentStatus.FAILED);
+                payment.setErrorCode(failure.ErrorCode());
+                payment.setErrorDescription(failure.ErrorDescription());
+
+                //throw new BusinessRulesViolationException(failure.ErrorCode(), failure.ErrorDescription());
+            }
+            case PaymentResult.Success success -> {
+                payment.setStatus(PaymentStatus.AUTHORIZED);
+                payment.setProcessorReference(success.processorReference());
+                payment.setBankReference(success.bankReference());
+            }
+        }
+        payment = paymentRepository.save(payment);
+        order= orderRepository.save(order);
+
+        return orderMapper.toResponse(payment);
 
     }
 }
